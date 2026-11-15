@@ -43,7 +43,7 @@ Four services, defined in `docker-compose.yml`:
 
 All four share a bridge network named `step-network` (compose service key `step-net`), pinned to `${STEP_NET_SUBNET:-10.213.0.0/24}`, which sits outside `172.16.0.0/12`. No service carries a static address: the backend trusts nginx by resolving its name. If the subnet collides with a LAN or VPN route, set `STEP_NET_SUBNET` in `.env` and run `docker compose down && docker network rm step-network` before bringing the stack back.
 
-Several `compose.e2e-*.yml` overlay files exist for CI and local e2e runs only, they are not part of a normal deployment, see [docs/development.md](development.md#end-to-end-tests-playwright) for what each one does.
+Several `test/e2e/compose.e2e-*.yml` overlay files exist for CI and local e2e runs only, they are not part of a normal deployment, see [docs/development.md](development.md#end-to-end-tests-playwright) for what each one does.
 
 ## Secrets
 

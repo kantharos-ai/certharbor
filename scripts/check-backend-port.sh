@@ -15,7 +15,7 @@ cd "$(dirname "$0")/.."
 status=0
 
 static_check() {
-  local files=(docker-compose.yml compose.e2e-*.yml)
+  local files=(docker-compose.yml test/e2e/compose.e2e-*.yml)
   for f in "${files[@]}"; do
     local args=(-f docker-compose.yml)
     [[ "$f" == docker-compose.yml ]] || args+=(-f "$f")
