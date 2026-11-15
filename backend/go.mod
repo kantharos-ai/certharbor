@@ -10,12 +10,12 @@ require (
 	github.com/danielgtaylor/huma/v2 v2.40.0
 	github.com/go-acme/lego/v4 v4.35.2
 	github.com/go-chi/chi/v5 v5.5.0
-	github.com/go-jose/go-jose/v4 v4.1.9
+	github.com/go-jose/go-jose/v4 v4.1.8
 	github.com/gorilla/sessions v1.4.0
 	github.com/lib/pq v1.12.3
 	github.com/pquerna/otp v1.5.0
 	github.com/smallstep/certificates v0.30.2
-	go.step.sm/crypto v0.92.0
+	go.step.sm/crypto v0.91.1
 	golang.org/x/crypto v0.58.0
 	golang.org/x/oauth2 v0.38.0
 	gopkg.in/yaml.v3 v3.0.1
