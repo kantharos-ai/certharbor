@@ -22,6 +22,22 @@ package.json
 clients/ts/src/
 clients/ts/dist/
 
+# Ruby client: openapi-generator output and build artefacts. Only the
+# hand-written packaging files (certharbor-client.gemspec, Gemfile, Rakefile,
+# README.md, .rspec, .openapi-generator-ignore, spec/smoke_spec.rb,
+# scripts/fix_cookie_auth.rb) are committed; see clients/ruby/README.md.
+clients/ruby/lib/
+clients/ruby/docs/
+clients/ruby/spec/api/
+clients/ruby/spec/models/
+clients/ruby/spec/spec_helper.rb
+clients/ruby/.openapi-generator/
+clients/ruby/.gitignore
+clients/ruby/.gitlab-ci.yml
+clients/ruby/.cache/
+clients/ruby/*.gem
+clients/ruby/Gemfile.lock
+
 # Generated ACME-server material for the Let's Encrypt leg (make e2e-le-certs)
 test/e2e/fixtures/pebble/certs/
 
