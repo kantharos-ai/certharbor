@@ -5,7 +5,7 @@ import { adminCredentials } from "../../fixtures/test.js";
 import { expect, test } from "@playwright/test";
 
 // Rewritten against GET /api/v1/history through the generated client
-// (clients/ts), the same pipeline cert-01.api.spec.ts was rewritten against.
+// (clients/ts), the same pipeline cert-01.api.test.ts was rewritten against.
 // The pre-split assertions scraped <span class="badge ...">action</span>
 // out of server-rendered HTML; the new operation returns a typed
 // PageHistoryEntryBody instead, so the row/action/filter checks below read
@@ -85,7 +85,7 @@ test("E2E-HIST-02: the history action filter", async () => {
   // be the stand-in here, but that cert is only ever issued, never renewed,
   // by any spec in this suite — a stale reference from before cert-04's
   // renew/revoke subjects were made per-run-unique to stop interfering with
-  // each other (see cert-04.api.spec.ts's own comment on that). Renewing a
+  // each other (see cert-04.api.test.ts's own comment on that). Renewing a
   // cert of this test's own here makes the control self-contained instead of
   // depending on another file's side effect and run order.
   const controlSubject = `e2e-hist-control-${Date.now().toString(36)}`;

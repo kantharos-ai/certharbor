@@ -6,8 +6,8 @@ import { expect, test } from "@playwright/test";
 
 // Rewritten against GET /api/v1/security/events and DELETE
 // /api/v1/security/ip-blocks/{ip} through the generated client (clients/ts),
-// the same pipeline hist.api.spec.ts was rewritten against.
-// sec-01.api.spec.ts keeps covering the still-live template route
+// the same pipeline hist.api.test.ts was rewritten against.
+// sec-01.api.test.ts keeps covering the still-live template route
 // (/admin/security, templateRouteRetired=false); this file is the new
 // operation's own coverage, not a replacement for it.
 

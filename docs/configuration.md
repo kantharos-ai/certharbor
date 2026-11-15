@@ -98,7 +98,7 @@ Every variable below is read in `backend/config/config.go` unless noted otherwis
 | `UI_HOSTNAME` | `certharbor-control` in compose (empty in `config.go`) | Yes | Hostname added as DNS SAN (self-signed) or used as CN (stepca). nginx verifies the backend's leaf for `certharbor-control`, so change it only together with `frontend/nginx.conf.template` |
 | `SSL_CERT` | `/opt/certharbor/ssl/server.crt` | n/a, hardcoded in config.go | Path to the serving TLS certificate. `config.go:109` hardcodes this path, setting `SSL_CERT` in `.env` has no effect |
 | `SSL_KEY` | `/opt/certharbor/ssl/server.key` | n/a, hardcoded in config.go | Path to the serving TLS private key. `config.go:110` hardcodes this path, setting `SSL_KEY` in `.env` has no effect |
-| `USE_HTTPS` | empty (auto-detect) | No, only in `compose.e2e-config.yml` | Force TLS on (`true`), or leave auto-detect (empty, probes whether `$SSL_CERT` exists). `USE_HTTPS=false` is a no-op: `main.go` ORs the flag with the same `$SSL_CERT` existence probe (`main.go:410-412`, default `false` in `config.go:128`), so an explicit `false` behaves identically to leaving the variable unset |
+| `USE_HTTPS` | empty (auto-detect) | No, only in `test/e2e/compose.e2e-config.yml` | Force TLS on (`true`), or leave auto-detect (empty, probes whether `$SSL_CERT` exists). `USE_HTTPS=false` is a no-op: `main.go` ORs the flag with the same `$SSL_CERT` existence probe (`main.go:410-412`, default `false` in `config.go:128`), so an explicit `false` behaves identically to leaving the variable unset |
 | `UI_CERT_DURATION` | `8760h` | Yes | Validity requested for both leaves issued from step-ca, the backend's under `UI_TLS_MODE=stepca` and nginx's under `WEB_TLS_MODE=stepca`. Unparseable or non-positive values fall back to the default with a warning |
 
 ### Database
@@ -123,7 +123,7 @@ Every variable below is read in `backend/config/config.go` unless noted otherwis
 | `TRUST_PROXY` | `true` in compose (`false` in `config.go`) | Yes | Rewrites the client IP from `X-Forwarded-For` only, never from `X-Real-IP`, `True-Client-IP` or `Forwarded`, and only when the immediate TCP peer is a trusted proxy. **Failure mode:** off behind nginx, every client is recorded as nginx's own address, so five wrong passwords from anyone lock everyone out of login for five minutes |
 | `TRUSTED_PROXY_CIDRS` | empty | Yes | Comma-separated CIDR blocks of trusted proxies, used verbatim when set. When empty, the backend resolves `WEB_UPSTREAM_HOST` instead and trusts exactly the addresses it returns, re-resolving every 5 seconds. **Failure mode:** a malformed entry is a startup fatal. A list wider than the proxy's own address lets anything inside it choose its recorded address |
 | `WEB_UPSTREAM_HOST` | `certharbor-console` | Yes | The proxy's name to resolve when `TRUSTED_PROXY_CIDRS` is empty. Resolution is not a startup fatal, because nginx only starts once the backend is healthy, so its name never resolves at boot. **Failure mode:** while the name does not resolve, forwarding headers are ignored (a warning is logged on the first failure and every minute after), so behind a misnamed proxy every client is recorded as the proxy's address |
-| `ALLOWED_DOMAIN_SUFFIXES` | empty (unrestricted) | **No**, only in `compose.e2e-config.yml` | Comma-separated domain suffixes the UI will request a signature for (internal issuance, renewal and the Let's Encrypt path). Matched on label boundaries. This is not an X.509 name constraint: a caller talking to step-ca directly bypasses it |
+| `ALLOWED_DOMAIN_SUFFIXES` | empty (unrestricted) | **No**, only in `test/e2e/compose.e2e-config.yml` | Comma-separated domain suffixes the UI will request a signature for (internal issuance, renewal and the Let's Encrypt path). Matched on label boundaries. This is not an X.509 name constraint: a caller talking to step-ca directly bypasses it |
 | `PUBLIC_BASE_URL` | unset | Yes | Externally reachable origin, e.g. `https://ca.example.com`. **Required for password recovery**, emailed links are built from this and never from the request. Behind nginx it must name nginx's published origin, the same host as `WEB_HOSTNAME`, with no path: the reset link targets `/reset-password` at the root. **Failure mode:** unset means reset emails are not sent |
 
 ### Web origin (nginx)
@@ -152,7 +152,7 @@ nginx serves the SPA at the root and proxies `/api/`, `/auth/`, `/health`, `/rea
 
 | Variable | Default | In compose | Description |
 |---|---|---|---|
-| `LE_ACME_DIRECTORY_URL` | `https://acme-v02.api.letsencrypt.org/directory` | **No**, only in `compose.e2e-le.yml` | ACME directory issuance dials. Env-only on purpose, a manager-editable database setting must not be able to repoint where issuance actually goes |
+| `LE_ACME_DIRECTORY_URL` | `https://acme-v02.api.letsencrypt.org/directory` | **No**, only in `test/e2e/compose.e2e-le.yml` | ACME directory issuance dials. Env-only on purpose, a manager-editable database setting must not be able to repoint where issuance actually goes |
 
 ### Local password login
 
@@ -176,7 +176,7 @@ nginx serves the SPA at the root and proxies `/api/`, `/auth/`, `/health`, `/rea
 | `OIDC_DEFAULT_ROLE` | empty (deny) | Yes | Role assigned when no group matches. Must be `viewer`, `manager`, `admin` or empty, or startup fails, **but only when `OIDC_ENABLED=true`**: the check is skipped otherwise |
 | `OIDC_SYNC_ROLE` | `true` | Yes | Re-syncs role from IdP groups on every login |
 
-Every OIDC variable and `LOCAL_LOGIN_ENABLED` reach the `certharbor-control` service from `.env` through `docker-compose.yml`. `compose.e2e-oidc.yml` points them at a mock IdP for the e2e suite. See [docs/authentication.md](authentication.md) for the login and group-mapping behaviour these variables configure.
+Every OIDC variable and `LOCAL_LOGIN_ENABLED` reach the `certharbor-control` service from `.env` through `docker-compose.yml`. `test/e2e/compose.e2e-oidc.yml` points them at a mock IdP for the e2e suite. See [docs/authentication.md](authentication.md) for the login and group-mapping behaviour these variables configure.
 
 After changing `.env` (for a variable the compose file does pass through), recreate the containers:
 
