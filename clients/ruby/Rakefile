@@ -1,0 +1,76 @@
+# frozen_string_literal: true
+
+require 'rake'
+require 'rspec/core/rake_task'
+require 'fileutils'
+require 'open-uri'
+
+ROOT          = __dir__
+SPEC_FILE     = File.expand_path('../../backend/openapi/openapi.json', ROOT)
+CACHE_DIR     = File.join(ROOT, '.cache')
+GENERATOR_VERSION = '7.17.0'
+GENERATOR_JAR = File.join(CACHE_DIR, "openapi-generator-cli-#{GENERATOR_VERSION}.jar")
+GENERATOR_URL = "https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/" \
+                "#{GENERATOR_VERSION}/openapi-generator-cli-#{GENERATOR_VERSION}.jar"
+
+desc 'Download the pinned openapi-generator-cli jar (cached under .cache/)'
+task :fetch_generator do
+  FileUtils.mkdir_p(CACHE_DIR)
+  next if File.exist?(GENERATOR_JAR)
+
+  puts "Downloading openapi-generator-cli #{GENERATOR_VERSION}..."
+  URI.open(GENERATOR_URL) { |remote| File.binwrite(GENERATOR_JAR, remote.read) }
+end
+
+desc 'Regenerate lib/ and docs/ from ../../backend/openapi/openapi.json'
+task generate: :fetch_generator do
+  unless File.exist?(SPEC_FILE)
+    abort "openapi spec not found at #{SPEC_FILE}. Run `make openapi` in backend/ first."
+  end
+
+  version = `#{File.expand_path('../../scripts/client-version.sh', ROOT)}`.strip
+  version = '0.0.0-dev' if version.empty?
+
+  props = {
+    'gemName' => 'certharbor-client',
+    'moduleName' => 'CertharborClient',
+    'gemVersion' => version,
+    'gemHomepage' => 'https://github.com/kantharos-ai/certharbor',
+    'gemSummary' => 'Typed Ruby client for the certharbor API',
+    'gemDescription' => 'Ruby client generated from backend/openapi/openapi.json',
+    'gemAuthor' => 'Kantharos AI',
+    'gemRequiredRubyVersion' => '>= 3.1'
+  }.map { |k, v| "#{k}=#{v}" }.join(',')
+
+  sh 'java', '-jar', GENERATOR_JAR, 'generate',
+     '-i', SPEC_FILE,
+     '-g', 'ruby',
+     '-o', ROOT,
+     '--additional-properties', props
+
+  # openapi-generator 7.17.0's ruby target mishandles cookie-based apiKey
+  # security schemes (our `session` scheme, D6) -- see scripts/fix_cookie_auth.rb.
+  sh 'ruby', File.join(ROOT, 'scripts', 'fix_cookie_auth.rb')
+end
+
+desc 'Generate then `gem build` the .gem file'
+task build: :generate do
+  Dir.chdir(ROOT) { sh 'gem', 'build', 'certharbor-client.gemspec' }
+end
+
+RSpec::Core::RakeTask.new(:spec_generated) do |t|
+  t.pattern = 'spec/**/*_spec.rb'
+  t.exclude_pattern = 'spec/smoke_spec.rb'
+end
+
+RSpec::Core::RakeTask.new(:spec_smoke) do |t|
+  t.pattern = 'spec/smoke_spec.rb'
+end
+
+desc 'Generate, then run the generator-provided rspec suite plus the smoke test'
+task spec: :generate do
+  Rake::Task['spec_generated'].invoke
+  Rake::Task['spec_smoke'].invoke
+end
+
+task default: :spec

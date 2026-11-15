@@ -1,0 +1,13 @@
+# openapi-generator honors this file like .gitignore: paths listed here are
+# never written or overwritten by `rake generate`, so our hand-maintained
+# packaging files survive every regeneration (mirrors clients/ts's split
+# between committed config and generated src, see docs/plans/frontend-backend-split.md D4/D8).
+Gemfile
+Rakefile
+README.md
+.rspec
+.rubocop.yml
+.travis.yml
+git_push.sh
+*.gemspec
+.openapi-generator-ignore

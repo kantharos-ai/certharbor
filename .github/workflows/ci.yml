@@ -213,6 +213,98 @@ jobs:
             npm publish ./dist/client.tgz
           fi
 
+  client-ruby:
+    name: Client package (Ruby)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        working-directory: clients/ruby
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Determine relevance
+        id: relevance
+        working-directory: .
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # shellcheck disable=SC2193 # false positive: actionlint substitutes
+          # github.ref with a placeholder before shellcheck sees this glob match.
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BASE="${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$BASE" ] || [[ "$BASE" =~ ^0+$ ]] || ! git cat-file -e "$BASE" 2>/dev/null; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BASE" "${{ github.sha }}" | grep -qE '^(\.github/workflows/ci\.yml|clients/ruby/|backend/openapi/openapi\.json)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The generator (openapi-generator-cli) is a JVM tool even though it
+      # emits Ruby; needed on devel and here identically (D4-equivalent).
+      - name: Set up Java
+        if: steps.relevance.outputs.run == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Ruby
+        if: steps.relevance.outputs.run == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+          working-directory: clients/ruby
+
+      - name: Cache the openapi-generator-cli jar
+        if: steps.relevance.outputs.run == 'true'
+        uses: actions/cache@v4
+        with:
+          path: clients/ruby/.cache
+          key: openapi-generator-cli-7.17.0
+
+      - name: Build the gem (generate + gem build)
+        if: steps.relevance.outputs.run == 'true'
+        run: bundle exec rake build
+
+      - name: Run the generator's rspec suite plus the smoke test
+        if: steps.relevance.outputs.run == 'true'
+        run: bundle exec rake spec_generated spec_smoke
+
+      - name: Upload the built gem
+        if: steps.relevance.outputs.run == 'true'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ruby-client
+          path: clients/ruby/*.gem
+          retention-days: 14
+
+      - name: Publish to GitHub Packages
+        if: steps.relevance.outputs.run == 'true' && startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p "$HOME/.gem"
+          printf -- '---\n:github: Bearer %s\n' "$GITHUB_TOKEN" > "$HOME/.gem/credentials"
+          chmod 0600 "$HOME/.gem/credentials"
+          shopt -s nullglob
+          gem_files=(certharbor-client-*.gem)
+          GEM_FILE="${gem_files[0]}"
+          gem push "$GEM_FILE" --key github --host https://rubygems.pkg.github.com/kantharos-ai
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest

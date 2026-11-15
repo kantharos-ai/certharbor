@@ -41,6 +41,7 @@ make up      # docker compose up -d --build
 ## Documentation
 
 - [docs/architecture.md](docs/architecture.md): components today, request flow, roles, the SPA migration's state, and the generated TypeScript client
+- [clients/ruby/README.md](clients/ruby/README.md): the generated Ruby client (gem), its build/publish lifecycle, and `docs/development.md`'s "Regenerating the API contract" section
 - [docs/configuration.md](docs/configuration.md): startup sequence, TLS bootstrap, and the full environment variable reference
 - [docs/authentication.md](docs/authentication.md): local login, OIDC SSO, session/CSRF cookies, 2FA, and password reset
 - [docs/deployment.md](docs/deployment.md): requirements, compose services, secrets, the container image, and Makefile targets
