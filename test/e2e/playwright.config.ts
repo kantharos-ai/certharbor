@@ -15,7 +15,7 @@ const ARTIFACT_DIR = process.env.E2E_ARTIFACT_DIR ?? path.join(__dirname, "artif
 const isCI = !!process.env.CI;
 
 export default defineConfig({
-  testDir: path.join(__dirname, "specs"),
+  testDir: path.join(__dirname, "tests"),
   outputDir: path.join(ARTIFACT_DIR, "test-results"),
 
   // Section 4.7: no test-level retries anywhere. A green-on-retry e2e test is
@@ -51,18 +51,18 @@ export default defineConfig({
   projects: [
     {
       name: "api",
-      testMatch: /.*\.api\.spec\.ts/,
+      testMatch: /.*\.api\.test\.ts/,
       fullyParallel: false,
     },
     {
       name: "ui",
-      testMatch: /.*\.ui\.spec\.ts/,
+      testMatch: /.*\.ui\.test\.ts/,
       fullyParallel: false,
       use: { ...devices["Desktop Chrome"], ignoreHTTPSErrors: true },
     },
     {
       name: "infra",
-      testMatch: /.*\.infra\.spec\.ts/,
+      testMatch: /.*\.infra\.test\.ts/,
       fullyParallel: false,
       // Bootstrap scenarios bring their own stack up from cold and wait on
       // healthchecks, which is minutes of stack time rather than test time.

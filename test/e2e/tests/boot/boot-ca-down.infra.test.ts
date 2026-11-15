@@ -22,7 +22,7 @@ interface ConsoleResult {
   output: string;
 }
 
-/** Mirrors specs/admin/adm-console.api.spec.ts's runCommand, duplicated rather than shared, since that one runs through the worker-scoped admin fixture this file cannot use (it targets BASE_URL, the container-network origin; infra runs on the host and dials the backend's address). */
+/** Mirrors tests/admin/adm-console.api.test.ts's runCommand, duplicated rather than shared, since that one runs through the worker-scoped admin fixture this file cannot use (it targets BASE_URL, the container-network origin; infra runs on the host and dials the backend's address). */
 async function runConsoleCommand(ctx: APIRequestContext, commandID: string): Promise<ConsoleResult> {
   const res = await apiMutation(ctx, "POST", "/api/v1/admin/console/run", { commandId: commandID });
   const body = (await res.json()) as { success: boolean; output: string };
@@ -34,7 +34,7 @@ test.describe.serial("bootstrap: ca-down scenario", () => {
     test.setTimeout(3 * 60_000);
 
     // Fresh volumes with a root cert present (stock read-only mount) and step-ca
-    // stopped. compose.e2e-nodeps.yml (already in E2E_COMPOSE_OVERRIDES for this
+    // stopped. test/e2e/compose.e2e-nodeps.yml (already in E2E_COMPOSE_OVERRIDES for this
     // scenario) is what lets certharbor-control start against it at all.
     await composeOrThrow("down", "-v");
     await composeOrThrow("up", "-d", "--wait", "step-ca", "postgres");

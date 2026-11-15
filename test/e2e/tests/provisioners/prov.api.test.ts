@@ -5,7 +5,7 @@ import { FIXTURE_USERS } from "../../fixtures/test.js";
 import { expect, test } from "@playwright/test";
 
 // Rewritten against GET /api/v1/provisioners through the generated client
-// (clients/ts), the same pipeline cert-01.api.spec.ts was rewritten against.
+// (clients/ts), the same pipeline cert-01.api.test.ts was rewritten against.
 // The pre-split assertions scraped <div class="prov-card"> out of
 // server-rendered HTML; the new operation returns Array<ProvisionerBody> |
 // null instead, so the row count and CA-degrade checks below read the JSON
