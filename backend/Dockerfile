@@ -1,5 +1,5 @@
 # ── Stage 1: Build ───────────────────────────────────────────────────────────
-FROM golang:1.27.3-alpine3.23 AS builder
+FROM golang:1.27.4-alpine3.23 AS builder
 
 WORKDIR /build
 
@@ -25,8 +25,16 @@ RUN addgroup -g 10001 -S certharbor && \
 # openssl stays here solely for admin_console.go's "openssl.version"
 # diagnostic allowlist entry, TLS bootstrap no longer needs it (main.go
 # does root fetch/leaf issuance/self-signed generation via crypto/x509).
+# apk upgrade pulls the security fixes the published alpine tag has not
+# rebuilt with yet (mirrors the rationale in frontend/Dockerfile): without
+# it, CI's docker/build-push-action GHA layer cache pins this RUN's
+# resolved package set indefinitely, so Alpine security advisories for
+# postgresql-client/libpq/zlib etc. published after the layer was first
+# cached never reach the image even though the upstream repo already
+# serves the fix.
 # hadolint ignore=DL3018
-RUN apk add --no-cache curl openssl ca-certificates netcat-openbsd tzdata postgresql-client
+RUN apk upgrade --no-cache && \
+    apk add --no-cache curl openssl ca-certificates netcat-openbsd tzdata postgresql-client
 
 COPY --from=builder /build/certharbor .
 
