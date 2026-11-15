@@ -100,6 +100,21 @@ npm run build
 
 The published version string is computed by `scripts/client-version.sh`, never hand-edited, see [docs/architecture.md](architecture.md#the-generated-typescript-client). `ci.yml`'s `client` job does more than build it: it stamps the computed version onto the generated package with `npm version --no-git-tag-version`, runs `publint` and `attw --pack . --profile esm-only --ignore-rules internal-resolution-error` against it, then `npm pack`s the result for the `frontend` job to install (`ci.yml:174-194`).
 
+To regenerate the Ruby client package (`clients/ruby`), same input, same "commit the spec, never a live server" rule:
+
+```bash
+cd clients/ruby
+bundle install
+rake generate   # openapi-generator (ruby target) against backend/openapi/openapi.json
+rake build      # generate + `gem build`, produces certharbor-client-<version>.gem
+```
+
+`rake generate` downloads the pinned `openapi-generator-cli` jar (it's a JVM tool even though it emits Ruby) into `clients/ruby/.cache/` on first run, so only a JVM and Ruby are needed, no Node and no Docker. Generated sources (`lib/`, `docs/`, the generator's own `spec/`) are gitignored; only the hand-written gemspec, `Rakefile`, `Gemfile`, `.openapi-generator-ignore`, and the smoke test at `clients/ruby/spec/smoke_spec.rb` are committed — see `clients/ruby/README.md`.
+
+One generator quirk worth knowing: openapi-generator 7.17.0's `ruby` target cannot handle `session`'s cookie-based `apiKey` scheme (`in: cookie`) and emits broken code for it; `clients/ruby/scripts/fix_cookie_auth.rb` patches the two affected generated files immediately after generation to send the cookie correctly. It is idempotent and a no-op once/if upstream fixes the bug.
+
+Versioning follows the same `<VERSION>-sha.<short-sha>` scheme as the TypeScript client (`scripts/client-version.sh`). `ci.yml`'s `client-ruby` job builds and tests this gem on every push/PR touching `backend/openapi/openapi.json` or `clients/ruby/**`, and publishes to GitHub Packages' RubyGems registry (`https://rubygems.pkg.github.com/kantharos-ai`) only on `v*` tags, mirroring the TS client's publish cadence (D8) to avoid republish-collision churn.
+
 ## Frontend
 
 `frontend/` is the Vite, React 19 and TypeScript single-page app. It needs Node 22.22 or newer. The generated client is not in its `package.json`: `make client` packs it to `clients/ts/dist/client.tgz` and `make frontend-install` runs `npm ci` and then `npm install --no-save` of that tarball (D8).
