@@ -1,6 +1,6 @@
 # Contract proof
 
-Phase 2 of `plans/frontend-backend-split.md` asks for a real two-commit proof that the consumption mechanism actually works, not just that its steps exist. This is that proof.
+Phase 2 of `docs/plans/frontend-backend-split.md` asks for a real two-commit proof that the consumption mechanism actually works, not just that its steps exist. This is that proof.
 
 ## What is being proven
 

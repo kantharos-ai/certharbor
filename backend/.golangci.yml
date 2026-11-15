@@ -20,7 +20,7 @@ linters:
     - unconvert
     - unparam
     - sloglint
-    # Added in Phase 1 of plans/frontend-backend-split.md
+    # Added in Phase 1 of docs/plans/frontend-backend-split.md
     - depguard
     - gomodguard_v2
 

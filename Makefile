@@ -229,7 +229,7 @@ frontend-sdk-surface: ## Fail on spec operations the SPA neither imports nor all
 	cd $(WEB_DIR) && npm run check:sdk-surface
 
 # ──────────────────────────────────────────────────────────────────────────────
-# End-to-end suite (plans/e2e-tests.md)
+# End-to-end suite (docs/plans/e2e-tests.md)
 # ──────────────────────────────────────────────────────────────────────────────
 E2E_DIR     := test/e2e
 E2E_PROJECT := $(if $(COMPOSE_PROJECT_NAME),$(COMPOSE_PROJECT_NAME),$(notdir $(CURDIR)))

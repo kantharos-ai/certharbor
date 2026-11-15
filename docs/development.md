@@ -69,16 +69,16 @@ Several compose overlays exist purely to reach test scenarios the stock stack ca
 | `compose.e2e-image.yml` | Runs both `certharbor-control` and `certharbor-console` from the images the CI `image` job already built, instead of `up -d --build` | `e2e.yml`, and `scenario.sh` when `E2E_USE_PREBUILT_IMAGE=1` |
 | `compose.e2e-noweb.yml` | Gives `certharbor-console` a profile nothing enables, so nginx never exists for the `infra` tier | `scenario.sh`, every scenario |
 | `compose.e2e-nodeps.yml` | Lets `certharbor-control` start against a stopped step-ca or postgres | `scenario.sh` (`ca-down`, `fatals`) |
-| `compose.e2e-config.yml` | Passes `USE_HTTPS` and `ALLOWED_DOMAIN_SUFFIXES` through, neither of which the stock compose file wires up | the nightly `oidc-mail` leg ([plans/e2e-tests.md](../plans/e2e-tests.md), section 2.7.1), not `scenario.sh` |
+| `compose.e2e-config.yml` | Passes `USE_HTTPS` and `ALLOWED_DOMAIN_SUFFIXES` through, neither of which the stock compose file wires up | the nightly `oidc-mail` leg ([plans/e2e-tests.md](plans/e2e-tests.md), section 2.7.1), not `scenario.sh` |
 | `compose.e2e-le.yml` | A local ACME server (pebble) for the Let's Encrypt leg | the nightly `oidc-mail` leg |
 | `compose.e2e-mail.yml` | A mail catcher for reset-link and notification tests | the nightly `oidc-mail` leg |
 | `compose.e2e-oidc.yml` | A mock OIDC IdP, with `OIDC_*` defaults pointing the backend at it and the redirect URI on nginx's origin | the nightly `oidc-mail` leg |
 
 `make nginx-lint` tests the nginx config without compose: it builds the `nginx-fixture` target of `frontend/Dockerfile` (the real config and entrypoint over the placeholder bundle in `frontend/nginx-lint/fixture-dist/`, no Node stage), runs it against a stub upstream with throwaway certificates on a throwaway network, and asserts the proxied prefixes, the SPA fallback at the root, the forgery table, the header set, the cache policy, the failure documents and the entrypoint's modes, with a 60-second budget measured after the image build. `make proxy-routes-check` asserts nginx's proxy location and the Vite dev proxy both derive from `frontend/proxy-prefixes.json` and that the SPA base agrees across `vite.config.ts`, nginx, the image and the entrypoint. `make config-keys-check` asserts every web-origin key has a row in the configuration reference, and `make backend-port-check` that no compose file publishes a host port for `certharbor-control`.
 
-The migration plan ([plans/frontend-backend-split.md](../plans/frontend-backend-split.md), section 10) describes the e2e suite as **active**, not paused. Four `ui` spec files assert against the server-rendered markup the migration eventually deletes and will need rewriting or retiring once that markup changes.
+The migration plan ([plans/frontend-backend-split.md](plans/frontend-backend-split.md), section 10) describes the e2e suite as **active**, not paused. Four `ui` spec files assert against the server-rendered markup the migration eventually deletes and will need rewriting or retiring once that markup changes.
 
-`specs/boot/` adds the `infra` project's coverage of the bootstrap matrix (Section 3.1 of [plans/e2e-tests.md](../plans/e2e-tests.md)): `boot-fingerprint.infra.spec.ts` (E2E-BOOT-01, -05, -06, one file since the three share a CA identity across the job), `boot-ca-down.infra.spec.ts` (E2E-BOOT-02, -09), `boot-provided.infra.spec.ts` (E2E-BOOT-03), `boot-selfsigned.infra.spec.ts` (E2E-BOOT-04), and `boot-fatals.infra.spec.ts` (E2E-BOOT-07's five cases plus its positive control). The first four files were verified with real `make e2e-bootstrap SCENARIO=<fingerprint|ca-down|provided|selfsigned>` runs on 2026-09-02; `boot-fatals.infra.spec.ts` is marked `test.fixme` (see the file's own comment) because case (c)'s timing against a stopped-not-absent postgres was not re-confirmed after a same-day fix to how the other cases reach postgres. No CI workflow invokes the `infra` project, only `lint-meta.yml`'s harness `tsc`/`eslint` steps cover these files, see `plans/e2e-implementation-status.md`.
+`specs/boot/` adds the `infra` project's coverage of the bootstrap matrix (Section 3.1 of [plans/e2e-tests.md](plans/e2e-tests.md)): `boot-fingerprint.infra.spec.ts` (E2E-BOOT-01, -05, -06, one file since the three share a CA identity across the job), `boot-ca-down.infra.spec.ts` (E2E-BOOT-02, -09), `boot-provided.infra.spec.ts` (E2E-BOOT-03), `boot-selfsigned.infra.spec.ts` (E2E-BOOT-04), and `boot-fatals.infra.spec.ts` (E2E-BOOT-07's five cases plus its positive control). The first four files were verified with real `make e2e-bootstrap SCENARIO=<fingerprint|ca-down|provided|selfsigned>` runs on 2026-09-02; `boot-fatals.infra.spec.ts` is marked `test.fixme` (see the file's own comment) because case (c)'s timing against a stopped-not-absent postgres was not re-confirmed after a same-day fix to how the other cases reach postgres. No CI workflow invokes the `infra` project, only `lint-meta.yml`'s harness `tsc`/`eslint` steps cover these files, see `docs/plans/e2e-implementation-status.md`.
 
 ## Regenerating the API contract
 
@@ -147,7 +147,7 @@ There is no markdown linter wired into CI (no markdownlint config or job exists 
 │   ├── step-ca-bootstrap.sh   # step-ca init script
 │   └── test_deploy.sh         # simulates a fresh install end to end
 ├── docs/                      # this documentation set
-├── plans/                     # frontend-backend-split.md and its companions
+│   └── plans/                 # frontend-backend-split.md and its companions
 ├── clients/ts/                # generated TypeScript client package
 ├── frontend/                  # React SPA, nginx config and the certharbor-console image
 ├── test/e2e/                  # Playwright suite

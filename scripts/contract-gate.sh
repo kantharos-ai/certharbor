@@ -4,7 +4,7 @@
 #
 # /api/v1 is permanent by construction, so the remedy for a breaking change is
 # a sentence a reviewer reads rather than a version integer no resolver reads.
-# See Q5 and 7.2 of plans/frontend-backend-split.md.
+# See Q5 and 7.2 of docs/plans/frontend-backend-split.md.
 set -euo pipefail
 
 # Paths below are repository-relative, so run from the repository root
