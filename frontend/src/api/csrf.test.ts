@@ -28,8 +28,11 @@ describe('readCsrf', () => {
   })
 
   it('reads document.cookie by default', () => {
+    // codeql[js/clear-text-cookie] jsdom test fixture, never transmitted over
+    // any network; simulates browser cookie state to exercise readCsrf().
     document.cookie = 'certharbor-csrf=from-document'
     expect(readCsrf()).toBe('from-document')
+    // codeql[js/clear-text-cookie] test cleanup, same jsdom fixture as above.
     document.cookie = 'certharbor-csrf=; Max-Age=0'
   })
 })
