@@ -21,15 +21,15 @@ usage() {
 # composes the image override in and the specs never pass --build.
 image_override=""
 if [[ "${E2E_USE_PREBUILT_IMAGE:-}" == "1" ]]; then
-  image_override="compose.e2e-image.yml"
+  image_override="test/e2e/compose.e2e-image.yml"
 fi
 
 case "$scenario" in
   selfsigned)  overrides="";                                            filter='E2E-BOOT-04' ;;
   provided)    overrides="";                                            filter='E2E-BOOT-03' ;;
-  ca-down)     overrides="compose.e2e-nodeps.yml";                      filter='E2E-BOOT-02|E2E-BOOT-09' ;;
-  fingerprint) overrides="compose.e2e-fingerprint.yml";                 filter='E2E-BOOT-01|E2E-BOOT-05|E2E-BOOT-06' ;;
-  fatals)      overrides="compose.e2e-fatals.yml:compose.e2e-nodeps.yml"; filter='E2E-BOOT-07' ;;
+  ca-down)     overrides="test/e2e/compose.e2e-nodeps.yml";             filter='E2E-BOOT-02|E2E-BOOT-09' ;;
+  fingerprint) overrides="test/e2e/compose.e2e-fingerprint.yml";        filter='E2E-BOOT-01|E2E-BOOT-05|E2E-BOOT-06' ;;
+  fatals)      overrides="test/e2e/compose.e2e-fatals.yml:test/e2e/compose.e2e-nodeps.yml"; filter='E2E-BOOT-07' ;;
   *)           usage ;;
 esac
 
@@ -37,7 +37,7 @@ esac
 # E2E-BOOT-02 needs the stock read-only mount so a root cert exists. They share a
 # scenario, so the spec composes the extra file itself per case.
 if [[ "$scenario" == "ca-down" ]]; then
-  export E2E_CA_DOWN_FINGERPRINT_OVERRIDE="compose.e2e-fingerprint.yml"
+  export E2E_CA_DOWN_FINGERPRINT_OVERRIDE="test/e2e/compose.e2e-fingerprint.yml"
 fi
 
 if [[ -n "$image_override" ]]; then
@@ -46,7 +46,7 @@ fi
 
 # The bootstrap tests run below the HTTP layer and dial the backend directly,
 # so no scenario brings nginx up.
-overrides="${overrides:+$overrides:}compose.e2e-noweb.yml"
+overrides="${overrides:+$overrides:}test/e2e/compose.e2e-noweb.yml"
 
 env_file="$repo_root/.env.e2e-$scenario"
 cp "$repo_root/.env" "$env_file"
@@ -72,7 +72,7 @@ fi
 # certharbor-control 10001) and the CA never finishes booting.
 chmod 644 "$repo_root"/secrets/* 2>/dev/null || true
 
-# compose.e2e-noweb.yml hides certharbor-console from every compose call the specs
+# test/e2e/compose.e2e-noweb.yml hides certharbor-console from every compose call the specs
 # make, so an origin left running by an earlier main-suite stack in the same
 # project would survive their `down -v`, holding step-network and its volume.
 docker compose -f "$repo_root/docker-compose.yml" --env-file "$env_file" rm -sf certharbor-console >/dev/null

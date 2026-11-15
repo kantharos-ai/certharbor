@@ -20,7 +20,7 @@ TOTP 2FA (below) applies to local accounts only. SSO users rely on their IdP's o
 
 Set `OIDC_ENABLED=true` to activate SSO. The implementation is authorization code + PKCE, and validates state, nonce, and the ID token signature against the issuer's JWKS.
 
-**This repository's stock `docker-compose.yml` does not wire any `OIDC_*` variable, or `LOCAL_LOGIN_ENABLED`, into the `certharbor` container.** Setting them in `.env` has no effect until you add the matching `environment:` lines to the `certharbor` service yourself, `compose.e2e-oidc.yml` (used by CI against a mock IdP) is a working example of the full key list. See [docs/configuration.md](configuration.md#oidc-sso) for the complete variable table and defaults.
+**This repository's stock `docker-compose.yml` does not wire any `OIDC_*` variable, or `LOCAL_LOGIN_ENABLED`, into the `certharbor` container.** Setting them in `.env` has no effect until you add the matching `environment:` lines to the `certharbor` service yourself, `test/e2e/compose.e2e-oidc.yml` (used by CI against a mock IdP) is a working example of the full key list. See [docs/configuration.md](configuration.md#oidc-sso) for the complete variable table and defaults.
 
 **Routes registered when `OIDC_ENABLED=true`** (`backend/main.go`):
 

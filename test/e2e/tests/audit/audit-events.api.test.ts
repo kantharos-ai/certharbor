@@ -5,7 +5,7 @@ import { adminCredentials } from "../../fixtures/test.js";
 import { expect, test } from "@playwright/test";
 
 // Rewritten against GET /api/v1/audit-events through the generated client
-// (clients/ts), the same pipeline hist.api.spec.ts was rewritten against.
+// (clients/ts), the same pipeline hist.api.test.ts was rewritten against.
 // Unlike /api/v1/security/events, this operation takes no q/outcome filter
 // (backend/api/security.go's listAuditEventsInput carries only page/
 // pageSize), so this suite covers pagination and the auth gate only.
@@ -24,7 +24,7 @@ test("E2E-AUDIT-01: audit events pagination via GET /api/v1/audit-events", async
   const beforeTotal = before.data?.total ?? 0;
 
   // A bare read never writes auth_log, so this test seeds rows directly
-  // (mirroring hist.api.spec.ts's cert_history seed), enough to guarantee a
+  // (mirroring hist.api.test.ts's cert_history seed), enough to guarantee a
   // second page exists. Seeding through the real login-failure path instead
   // would register every attempt against security.RL (backend/security/
   // security.go): LimitCount is 5 per LimitWindow, so a seed loop of more

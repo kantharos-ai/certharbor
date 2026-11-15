@@ -4,7 +4,7 @@ import { newJar } from "./session.js";
 
 /**
  * Drives the authorization-code + PKCE round trip against
- * ghcr.io/navikt/mock-oauth2-server (compose.e2e-oidc.yml).
+ * ghcr.io/navikt/mock-oauth2-server (test/e2e/compose.e2e-oidc.yml).
  *
  * The round trip is three hops, and the middle one is not ours: certharbor
  * redirects to the IdP, the IdP renders an interactive sign-in form, and its
