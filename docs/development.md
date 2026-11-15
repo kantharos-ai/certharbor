@@ -56,23 +56,23 @@ go test -tags=integration -race -count=1 ./db/...
 
 nginx refuses a TLS handshake for any name but `WEB_HOSTNAME`, so an in-network run needs `WEB_HOSTNAME=certharbor-console` in `.env`, which is what `e2e.yml` writes.
 
-`.github/workflows/e2e.yml`'s `image` job builds the backend and frontend images on separate cache scopes (`e2e-backend`, `e2e-frontend`), asserts neither contains Node, and ships both in one `docker save | gzip` artifact. `e2e-main` loads them, materialises the Playwright-plus-docker-CLI harness image from its layer cache, brings up `docker-compose.yml` plus `compose.e2e-image.yml`, asserts the backend has no host binding, and runs the `api` project and then the `ui` project's `specs/spa/` files. The rest of the `ui` project runs locally via `make e2e-main` (which runs `api` then `ui`).
+`.github/workflows/e2e.yml`'s `image` job builds the backend and frontend images on separate cache scopes (`e2e-backend`, `e2e-frontend`), asserts neither contains Node, and ships both in one `docker save | gzip` artifact. `e2e-main` loads them, materialises the Playwright-plus-docker-CLI harness image from its layer cache, brings up `docker-compose.yml` plus `test/e2e/compose.e2e-image.yml`, asserts the backend has no host binding, and runs the `api` project and then the `ui` project's `specs/spa/` files. The rest of the `ui` project runs locally via `make e2e-main` (which runs `api` then `ui`).
 
 `specs/spa/spa-shell.ui.spec.ts` drives the SPA through nginx: login at the root with `__Host-` cookies, navigation, a hard refresh of a deep link, logout, a refresh mid-MFA, a CSP smoke over every route in `frontend/src/routes/routeList.ts` against the policy read off nginx's response, and the unavailable state with the backend stopped.
 
-Several compose overlays exist purely to reach test scenarios the stock stack can't. `test/e2e/scenario.sh` (invoked by `make e2e-bootstrap SCENARIO=...`) is the driver behind the bootstrap scenarios. It composes `compose.e2e-noweb.yml` into every scenario, plus, chosen per scenario, `compose.e2e-image.yml`, `compose.e2e-nodeps.yml`, `compose.e2e-fingerprint.yml`, and `compose.e2e-fatals.yml` (with `compose.e2e-nodeps.yml` for the `fatals` case). `scripts/step-ca-bootstrap.sh` is unrelated to any of this, it is the CA init script `docker-compose.yml` runs inside the `step-ca` container itself.
+Several compose overlays exist purely to reach test scenarios the stock stack can't. `test/e2e/scenario.sh` (invoked by `make e2e-bootstrap SCENARIO=...`) is the driver behind the bootstrap scenarios. It composes `test/e2e/compose.e2e-noweb.yml` into every scenario, plus, chosen per scenario, `test/e2e/compose.e2e-image.yml`, `test/e2e/compose.e2e-nodeps.yml`, `test/e2e/compose.e2e-fingerprint.yml`, and `test/e2e/compose.e2e-fatals.yml` (with `test/e2e/compose.e2e-nodeps.yml` for the `fatals` case). `scripts/step-ca-bootstrap.sh` is unrelated to any of this, it is the CA init script `docker-compose.yml` runs inside the `step-ca` container itself.
 
 | Overlay | Purpose | Applied by |
 |---|---|---|
-| `compose.e2e-fatals.yml` | Turns off `restart: unless-stopped` so an intended crash stays exited and its exit code can be read | `scenario.sh` (`fatals`) |
-| `compose.e2e-fingerprint.yml` | Drops the read-only `step-ca-data` mount so `CA_FINGERPRINT`'s fetch path is actually exercised | `scenario.sh` (`fingerprint`) |
-| `compose.e2e-image.yml` | Runs both `certharbor-control` and `certharbor-console` from the images the CI `image` job already built, instead of `up -d --build` | `e2e.yml`, and `scenario.sh` when `E2E_USE_PREBUILT_IMAGE=1` |
-| `compose.e2e-noweb.yml` | Gives `certharbor-console` a profile nothing enables, so nginx never exists for the `infra` tier | `scenario.sh`, every scenario |
-| `compose.e2e-nodeps.yml` | Lets `certharbor-control` start against a stopped step-ca or postgres | `scenario.sh` (`ca-down`, `fatals`) |
-| `compose.e2e-config.yml` | Passes `USE_HTTPS` and `ALLOWED_DOMAIN_SUFFIXES` through, neither of which the stock compose file wires up | the nightly `oidc-mail` leg ([plans/e2e-tests.md](plans/e2e-tests.md), section 2.7.1), not `scenario.sh` |
-| `compose.e2e-le.yml` | A local ACME server (pebble) for the Let's Encrypt leg | the nightly `oidc-mail` leg |
-| `compose.e2e-mail.yml` | A mail catcher for reset-link and notification tests | the nightly `oidc-mail` leg |
-| `compose.e2e-oidc.yml` | A mock OIDC IdP, with `OIDC_*` defaults pointing the backend at it and the redirect URI on nginx's origin | the nightly `oidc-mail` leg |
+| `test/e2e/compose.e2e-fatals.yml` | Turns off `restart: unless-stopped` so an intended crash stays exited and its exit code can be read | `scenario.sh` (`fatals`) |
+| `test/e2e/compose.e2e-fingerprint.yml` | Drops the read-only `step-ca-data` mount so `CA_FINGERPRINT`'s fetch path is actually exercised | `scenario.sh` (`fingerprint`) |
+| `test/e2e/compose.e2e-image.yml` | Runs both `certharbor-control` and `certharbor-console` from the images the CI `image` job already built, instead of `up -d --build` | `e2e.yml`, and `scenario.sh` when `E2E_USE_PREBUILT_IMAGE=1` |
+| `test/e2e/compose.e2e-noweb.yml` | Gives `certharbor-console` a profile nothing enables, so nginx never exists for the `infra` tier | `scenario.sh`, every scenario |
+| `test/e2e/compose.e2e-nodeps.yml` | Lets `certharbor-control` start against a stopped step-ca or postgres | `scenario.sh` (`ca-down`, `fatals`) |
+| `test/e2e/compose.e2e-config.yml` | Passes `USE_HTTPS` and `ALLOWED_DOMAIN_SUFFIXES` through, neither of which the stock compose file wires up | the nightly `oidc-mail` leg ([plans/e2e-tests.md](plans/e2e-tests.md), section 2.7.1), not `scenario.sh` |
+| `test/e2e/compose.e2e-le.yml` | A local ACME server (pebble) for the Let's Encrypt leg | the nightly `oidc-mail` leg |
+| `test/e2e/compose.e2e-mail.yml` | A mail catcher for reset-link and notification tests | the nightly `oidc-mail` leg |
+| `test/e2e/compose.e2e-oidc.yml` | A mock OIDC IdP, with `OIDC_*` defaults pointing the backend at it and the redirect URI on nginx's origin | the nightly `oidc-mail` leg |
 
 `make nginx-lint` tests the nginx config without compose: it builds the `nginx-fixture` target of `frontend/Dockerfile` (the real config and entrypoint over the placeholder bundle in `frontend/nginx-lint/fixture-dist/`, no Node stage), runs it against a stub upstream with throwaway certificates on a throwaway network, and asserts the proxied prefixes, the SPA fallback at the root, the forgery table, the header set, the cache policy, the failure documents and the entrypoint's modes, with a 60-second budget measured after the image build. `make proxy-routes-check` asserts nginx's proxy location and the Vite dev proxy both derive from `frontend/proxy-prefixes.json` and that the SPA base agrees across `vite.config.ts`, nginx, the image and the entrypoint. `make config-keys-check` asserts every web-origin key has a row in the configuration reference, and `make backend-port-check` that no compose file publishes a host port for `certharbor-control`.
 
@@ -131,8 +131,7 @@ There is no markdown linter wired into CI (no markdownlint config or job exists 
 ```
 .
 ├── docker-compose.yml         # 4 services: postgres, step-ca, certharbor-control, certharbor-console
-├── compose.e2e-*.yml          # e2e-only overlays, see above
-├── .dockerignore              # for root-context builds (frontend/Dockerfile)
+├── .dockerignore               # for root-context builds (frontend/Dockerfile)
 ├── .env.example               # configuration template
 ├── Makefile                   # setup, up, down, backup, test, lint, e2e-*, ...
 ├── secrets/                   # generated by `make setup`, not committed
@@ -151,6 +150,7 @@ There is no markdown linter wired into CI (no markdownlint config or job exists 
 ├── clients/ts/                # generated TypeScript client package
 ├── frontend/                  # React SPA, nginx config and the certharbor-console image
 ├── test/e2e/                  # Playwright suite
+│   └── compose.e2e-*.yml      # e2e-only overlays, see above
 ├── LICENSE                    # MIT
 ├── README.md                  # short index
 └── backend/

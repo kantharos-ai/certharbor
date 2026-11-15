@@ -129,7 +129,7 @@ jobs:
           chmod 644 secrets/*
 
       - name: Bring up the stack
-        run: docker compose -f docker-compose.yml -f compose.e2e-image.yml up -d --wait
+        run: docker compose -f docker-compose.yml -f test/e2e/compose.e2e-image.yml up -d --wait
 
       - name: The backend publishes no host port
         run: ./scripts/check-backend-port.sh --running

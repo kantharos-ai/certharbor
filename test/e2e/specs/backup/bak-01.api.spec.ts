@@ -24,7 +24,7 @@ interface Backup {
   downloadUrl: string;
 }
 
-// Must not run against compose.e2e-fingerprint.yml, which removes /home/step
+// Must not run against test/e2e/compose.e2e-fingerprint.yml, which removes /home/step
 // and with it the step-ca-data component (Section 2.7.1).
 test("E2E-BAK-01: the bundle is valid, complete and self-verifying", async ({ admin }) => {
   test.setTimeout(300_000);
