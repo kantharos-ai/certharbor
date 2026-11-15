@@ -115,6 +115,14 @@ One generator quirk worth knowing: openapi-generator 7.17.0's `ruby` target cann
 
 Versioning follows the same `<VERSION>-sha.<short-sha>` scheme as the TypeScript client (`scripts/client-version.sh`). `ci.yml`'s `client-ruby` job builds and tests this gem on every push/PR touching `backend/openapi/openapi.json` or `clients/ruby/**`, and publishes to GitHub Packages' RubyGems registry (`https://rubygems.pkg.github.com/kantharos-ai`) only on `v*` tags, mirroring the TS client's publish cadence (D8) to avoid republish-collision churn.
 
+To regenerate the Java client package (`clients/java`):
+
+```bash
+cd clients/java
+./gradlew build   # org.openapi.generator Gradle plugin, against backend/openapi/openapi.json
+```
+
+`./gradlew build` regenerates the client from the committed spec before compiling, same as `npm run generate` chaining into `clients/ts`'s build — there is no separate generate step to remember. The generator target is `java` with the `native` library (java.net.http transport, Jackson for (de)serialization, no second HTTP stack); generated sources land under `clients/java/build/generated/openapi/` and are gitignored, only `build.gradle.kts`, `settings.gradle.kts`, `gradle.properties` and the Gradle wrapper are committed. The version is computed the same way as the TS client's (`scripts/client-version.sh`, `<VERSION>-sha.<short-sha>`), read directly by `build.gradle.kts` at configuration time rather than stamped by a separate CI step. `.github/workflows/client-java.yml` builds and smoke-tests the client on every push or pull request touching `backend/openapi/openapi.json` or `clients/java/**`, and publishes to GitHub Packages' Maven registry only on a `v*` tag (unlike the TS client, there is no in-repo consumer of the Java client to protect from a stale registry resolve, so the "never resolve from registry" constraint that governs `clients/ts`/`frontend` does not apply here).
 ## Frontend
 
 `frontend/` is the Vite, React 19 and TypeScript single-page app. It needs Node 22.22 or newer. The generated client is not in its `package.json`: `make client` packs it to `clients/ts/dist/client.tgz` and `make frontend-install` runs `npm ci` and then `npm install --no-save` of that tarball (D8).

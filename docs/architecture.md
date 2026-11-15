@@ -83,6 +83,10 @@ The version is never hand-edited. The `VERSION` file at the repository root is t
 
 `frontend` never declares the client as a package.json dependency (D8 of the plan): CI installs the freshly packed tarball with `npm install --no-save` so the client under test is always the one generated from the commit being built, never a stale published version from an npm cache.
 
+### The generated Java client
+
+`clients/java` (`ai.kantharos:certharbor-client`) is generated from the same `backend/openapi/openapi.json` by the OpenAPI Generator's `java` target, `native` library (java.net.http transport, Jackson serialization, no second HTTP stack), via the `org.openapi.generator` Gradle plugin. Unlike the TS client it has no in-repo consumer, so `.github/workflows/client-java.yml` builds and smoke-tests it on every push and pull request touching the spec or `clients/java/**`, with no frontend-style provenance assertion to make, and publishes to GitHub Packages' Maven registry (`https://maven.pkg.github.com/kantharos-ai/certharbor`) only on a `v*` tag, same cadence as the TS client (D8) and for the same reason: avoiding republish-collision churn on every merge. The version is `<VERSION>-sha.<short-sha>` (`scripts/client-version.sh`), computed directly inside `build.gradle.kts` rather than stamped by a CI step.
+
 ### Contract documentation
 
 - [docs/contract-changes.md](contract-changes.md) is an append-only log of every breaking API change, gated by `scripts/contract-gate.sh` (backed by `oasdiff`) so a breaking change without a matching row fails CI.
