@@ -233,7 +233,11 @@ jobs:
         id: relevance
         working-directory: .
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -294,7 +298,9 @@ jobs:
           mkdir -p "$HOME/.gem"
           printf -- '---\n:github: Bearer %s\n' "$GITHUB_TOKEN" > "$HOME/.gem/credentials"
           chmod 0600 "$HOME/.gem/credentials"
-          GEM_FILE=$(ls certharbor-client-*.gem | head -1)
+          shopt -s nullglob
+          gem_files=(certharbor-client-*.gem)
+          GEM_FILE="${gem_files[0]}"
           gem push "$GEM_FILE" --key github --host https://rubygems.pkg.github.com/kantharos-ai
 
   frontend:
