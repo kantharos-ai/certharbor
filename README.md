@@ -47,7 +47,7 @@ make up      # docker compose up -d --build
 - [docs/security.md](docs/security.md): application security controls and the supply-chain gates in CI
 - [docs/development.md](docs/development.md): local dev loop, tests, lint gates, regenerating the API contract, and project structure
 - [docs/faq.md](docs/faq.md): frequently asked questions
-- [plans/frontend-backend-split.md](plans/frontend-backend-split.md): the in-progress React SPA / Go backend-for-frontend migration plan
+- [docs/plans/frontend-backend-split.md](docs/plans/frontend-backend-split.md): the in-progress React SPA / Go backend-for-frontend migration plan
 
 ## License
 

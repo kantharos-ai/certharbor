@@ -25,7 +25,7 @@ static_check() {
       echo "$f: certharbor-control publishes $ports; publish on certharbor-console only"
       status=1
     fi
-    # certharbor-delivery has no HTTP listener at all (plans/distribution.md
+    # certharbor-delivery has no HTTP listener at all (docs/plans/distribution.md
     # Section 2), so it must never carry a ports: entry either.
     local delivery_ports
     delivery_ports=$(docker compose "${args[@]}" config --format json --no-interpolate | jq -c '.services["certharbor-delivery"].ports // empty')
