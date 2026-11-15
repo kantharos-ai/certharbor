@@ -237,6 +237,8 @@ jobs:
             echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          # shellcheck disable=SC2193 # false positive: actionlint substitutes
+          # github.ref with a placeholder before shellcheck sees this glob match.
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
