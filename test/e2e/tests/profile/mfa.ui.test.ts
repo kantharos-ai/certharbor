@@ -8,7 +8,7 @@ import { createUser, disposableName, expect, test } from "../../fixtures/test.js
 // MFA enrollment state is sticky per account, so sharing `viewer`/`manager`
 // here would leak enabled-2FA state into every other spec that signs in as
 // them. `twofa_user` (fixtures/test.ts's TWOFA_SUBJECT) is deliberately not
-// reused either — see auth-04.ui.spec.ts's note below.
+// reused either — see auth-04.ui.test.ts's note below.
 
 async function signIn(page: Page, username: string, password: string): Promise<void> {
   await page.goto(`${BASE_URL}/login`);

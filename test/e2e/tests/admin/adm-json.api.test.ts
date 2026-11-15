@@ -13,7 +13,7 @@ import { expect, test } from "@playwright/test";
 // Rewritten against the JSON admin operations (backend/api/admin.go):
 // GET /api/v1/admin/about, GET /api/v1/admin/integrity,
 // GET /api/v1/admin/console/commands and POST /api/v1/admin/console/run.
-// adm-01.api.spec.ts and adm-console.api.spec.ts cover the same operations
+// adm-01.api.test.ts and adm-console.api.test.ts cover the same operations
 // through the apiClient/apiMutation helpers instead of the generated
 // @kantharos-ai/certharbor-client used here; this file is additional
 // coverage of the generated client, not a replacement for either.
@@ -28,7 +28,7 @@ test.beforeAll(async () => {
   admin = await authedClient(adminCredentials());
 });
 
-// Serial and adjacent, same pairing rationale as adm-console.api.spec.ts's
+// Serial and adjacent, same pairing rationale as adm-console.api.test.ts's
 // ADM-02/ADM-03: E2E-HLTH-06 below alone passes against a stubbed Health()
 // that always returns nil, and the CA-down half is what makes it meaningful.
 test.describe.configure({ mode: "serial" });
@@ -67,7 +67,7 @@ test("E2E-ADM-01 (JSON): app.version pins the certificates library", async () =>
   expect(run.data?.success).toBe(true);
   expect(run.data?.exitCode).toBe(0);
 
-  // The second line only, exactly as adm-01.api.spec.ts asserts against the
+  // The second line only, exactly as adm-01.api.test.ts asserts against the
   // template route: the first line's Version/BuildDate/GitCommit are
   // compile-time defaults with no -X ldflags set.
   const lines = (run.data?.output ?? "").split("\n");
