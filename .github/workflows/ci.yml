@@ -54,7 +54,7 @@ jobs:
         run: go test -race -coverprofile=coverage.out ./...
 
       - name: Coverage gate
-        run: THRESHOLD=28 bash scripts/coverage-gate.sh
+        run: THRESHOLD=28 bash ../.github/scripts/coverage-gate.sh
         env:
           COVERPROFILE: coverage.out
 
@@ -74,7 +74,7 @@ jobs:
 
       - name: depguard rejects the negative fixture
         working-directory: .
-        run: ./scripts/lint-fixtures.sh
+        run: ./.github/scripts/lint-fixtures.sh
 
   db-integration:
     name: DB Integration Tests
@@ -150,7 +150,7 @@ jobs:
       - name: Breaking changes are recorded in docs/contract-changes.md
         env:
           BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
-        run: ./scripts/contract-gate.sh "$BASE_SHA"
+        run: ./.github/scripts/contract-gate.sh "$BASE_SHA"
 
       - name: Set up Node
         uses: actions/setup-node@v7.1.0

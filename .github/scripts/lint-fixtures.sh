@@ -7,7 +7,7 @@
 # config is refactored and nobody notices.
 set -euo pipefail
 
-cd "$(dirname "$0")/../backend"
+cd "$(dirname "$0")/../../backend"
 
 FIXTURE=testdata/lintfixtures/api_imports_models.go.fixture
 TARGET=api/zz_lint_fixture.go

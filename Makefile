@@ -182,7 +182,7 @@ delivery-import: ## Import a delivery registry YAML: make delivery-import FILE=r
 .PHONY: cover
 cover: ## Run coverage gate
 	cd $(GO_DIR) && go test -coverprofile=coverage.out ./... >/dev/null
-	cd $(GO_DIR) && COVERPROFILE=coverage.out THRESHOLD=15 bash scripts/coverage-gate.sh
+	cd $(GO_DIR) && COVERPROFILE=coverage.out THRESHOLD=15 bash ../.github/scripts/coverage-gate.sh
 
 .PHONY: version
 version: ## Write the VERSION file into every file that carries a version

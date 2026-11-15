@@ -89,7 +89,7 @@ The version is never hand-edited. The `VERSION` file at the repository root is t
 
 ### Contract documentation
 
-- [docs/contract-changes.md](contract-changes.md) is an append-only log of every breaking API change, gated by `scripts/contract-gate.sh` (backed by `oasdiff`) so a breaking change without a matching row fails CI.
+- [docs/contract-changes.md](contract-changes.md) is an append-only log of every breaking API change, gated by `.github/scripts/contract-gate.sh` (backed by `oasdiff`) so a breaking change without a matching row fails CI.
 - [docs/contract-proof.md](contract-proof.md) is a two-commit worked proof that the provenance check above actually rejects a client that doesn't match the commit under test, not just that the check exists.
 
 See also: [docs/configuration.md](configuration.md), [docs/deployment.md](deployment.md), [docs/development.md](development.md).

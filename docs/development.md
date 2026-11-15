@@ -163,11 +163,13 @@ There is no markdown linter wired into CI (no markdownlint config or job exists 
 │   ├── check-backend-port.sh  # asserts certharbor-control publishes no host port, statically or running
 │   ├── check-config-keys.sh   # asserts each web-origin key has a configuration row
 │   ├── check-proxy-routes.sh  # asserts nginx and Vite derive from one prefix list and one SPA base
-│   ├── client-version.sh      # derives the TS client's published version
-│   ├── contract-gate.sh       # fails a breaking change with no contract-changes.md row
-│   ├── lint-fixtures.sh       # asserts the depguard negative fixture is rejected
+│   ├── client-version.sh      # derives the TS/Java/Ruby clients' published version
 │   ├── step-ca-bootstrap.sh   # step-ca init script
 │   └── test_deploy.sh         # simulates a fresh install end to end
+├── .github/scripts/           # CI-only: no dev-facing make target, no build-time dependency
+│   ├── contract-gate.sh       # fails a breaking change with no contract-changes.md row
+│   ├── coverage-gate.sh       # ratcheted backend coverage gate (moved from backend/scripts/)
+│   └── lint-fixtures.sh       # asserts the depguard negative fixture is rejected
 ├── docs/                      # this documentation set
 │   └── plans/                 # frontend-backend-split.md and its companions
 ├── clients/ts/                # generated TypeScript client package
@@ -192,7 +194,6 @@ There is no markdown linter wired into CI (no markdownlint config or job exists 
     ├── openapi/               # committed openapi.json plus embed glue
     ├── templates/             # HTML templates (Go html/template)
     ├── static/                # CSS, JS, and a favicon (no other images)
-    ├── scripts/               # coverage-gate.sh
     ├── testdata/              # golden files for the api/handlers test suites
     ├── Dockerfile              # multi-stage Alpine build
     ├── entrypoint.sh           # startup sequence: secrets → DB wait → provisioner → exec app

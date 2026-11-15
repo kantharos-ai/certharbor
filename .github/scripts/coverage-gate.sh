@@ -2,7 +2,7 @@
 # coverage-gate.sh, ratcheted coverage gate for certharbor.
 #
 # Usage:
-#   ./scripts/coverage-gate.sh [THRESHOLD]
+#   ./.github/scripts/coverage-gate.sh [THRESHOLD]
 #
 # THRESHOLD defaults to the THRESHOLD environment variable, then to 28
 # (Phase 9: measured coverage was 31.1%, more than 5 points above the prior
@@ -56,7 +56,7 @@ fi
 # drifted more than 5 points above THRESHOLD, the threshold is stale and
 # nobody has raised it to reflect the new measured level.
 if awk -v t="$total" -v max="$THRESHOLD" 'BEGIN { exit !(t+0 > max+5) }'; then
-    echo "[coverage-gate] FAIL, coverage ${total}% is more than 5 points above threshold ${THRESHOLD}%; raise THRESHOLD in scripts/coverage-gate.sh and .github/workflows/ci.yml to reflect the new measured level" >&2
+    echo "[coverage-gate] FAIL, coverage ${total}% is more than 5 points above threshold ${THRESHOLD}%; raise THRESHOLD in .github/scripts/coverage-gate.sh and .github/workflows/ci.yml to reflect the new measured level" >&2
     exit 1
 fi
 
