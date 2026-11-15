@@ -34,7 +34,7 @@ test.describe.serial("bootstrap: ca-down scenario", () => {
     test.setTimeout(3 * 60_000);
 
     // Fresh volumes with a root cert present (stock read-only mount) and step-ca
-    // stopped. compose.e2e-nodeps.yml (already in E2E_COMPOSE_OVERRIDES for this
+    // stopped. test/e2e/compose.e2e-nodeps.yml (already in E2E_COMPOSE_OVERRIDES for this
     // scenario) is what lets certharbor-control start against it at all.
     await composeOrThrow("down", "-v");
     await composeOrThrow("up", "-d", "--wait", "step-ca", "postgres");

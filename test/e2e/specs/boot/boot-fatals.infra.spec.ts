@@ -9,7 +9,7 @@ const SECRET_KEY_PATH = path.join(REPO_ROOT, "secrets", "secret_key");
 const ADMIN_PW = "Boot07-e2e-Pass1!";
 
 /**
- * Cases (a), (d) and (e) fail before the DB connect, so compose.e2e-nodeps.yml
+ * Cases (a), (d) and (e) fail before the DB connect, so test/e2e/compose.e2e-nodeps.yml
  * (already applied for this whole scenario) lets certharbor-control start without step-ca
  * at all, but postgres still needs to be up and reachable, or entrypoint.sh's
  * own 60x1s wait-for-postgres loop (which every case runs through first) hangs
@@ -23,7 +23,7 @@ async function freshPostgres(): Promise<void> {
 
 async function expectFatal(logContains: string | string[]): Promise<void> {
   await upStack("certharbor-control");
-  // The scenario's own compose.e2e-fatals.yml sets restart:"no" for every
+  // The scenario's own test/e2e/compose.e2e-fatals.yml sets restart:"no" for every
   // case in this file, not only (c), against the stock restart policy a
   // fatal exit restarts into the same fatal, and reading ExitCode mid-loop
   // races the next restart.

@@ -47,10 +47,10 @@ test.describe.serial("bootstrap: fingerprint scenario", () => {
     const iFetching = log.indexOf("fetching root CA certificate via CA_FINGERPRINT");
     const iFetched = log.indexOf("root CA certificate fetched and verified");
     const iIssued = log.indexOf("UI leaf certificate obtained");
-    // compose.e2e-fingerprint.yml applied is what makes this line possible at
+    // test/e2e/compose.e2e-fingerprint.yml applied is what makes this line possible at
     // all: under the stock read-only mount, ensureRootCert early-returns and
     // CA_FINGERPRINT is never read.
-    expect(iFetching, "missing 'fetching root CA certificate via CA_FINGERPRINT', was compose.e2e-fingerprint.yml applied?").toBeGreaterThanOrEqual(0);
+    expect(iFetching, "missing 'fetching root CA certificate via CA_FINGERPRINT', was test/e2e/compose.e2e-fingerprint.yml applied?").toBeGreaterThanOrEqual(0);
     expect(iFetched, "missing 'root CA certificate fetched and verified'").toBeGreaterThan(iFetching);
     expect(iIssued, "missing 'UI leaf certificate obtained'").toBeGreaterThan(iFetched);
 

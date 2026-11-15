@@ -264,7 +264,7 @@ export async function waitExited(service: string, timeoutMs = 90_000): Promise<C
 
 /** CI substitutes the prebuilt image and never passes --build; a local run needs it to pick up source changes. */
 export function upFlags(): string[] {
-  const usesPrebuiltImage = overrideFiles().includes("compose.e2e-image.yml");
+  const usesPrebuiltImage = overrideFiles().includes("test/e2e/compose.e2e-image.yml");
   return usesPrebuiltImage ? [] : ["--build"];
 }
 
