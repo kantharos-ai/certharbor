@@ -1,0 +1,154 @@
+// Generated from the committed backend/openapi/openapi.json (plans/frontend-backend-split.md,
+// D4/D8, mirrored from clients/ts). Never a live server: generation needs no running backend.
+plugins {
+    java
+    `maven-publish`
+    id("org.openapi.generator") version "7.17.0"
+}
+
+group = "ai.kantharos"
+version = clientVersion()
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+val generatedDir = layout.buildDirectory.dir("generated/openapi")
+
+// library = "native": java.net.http (JDK 11+, built into the runtime) for transport, Jackson
+// (the only serializer the native template supports) for (de)serialization. No second HTTP
+// stack. Mirrors the TS client's "no runtime deps beyond what the generator bundles" posture
+// (D8 in plans/frontend-backend-split.md) more closely than okhttp-gson, which would pull
+// OkHttp in as a second HTTP stack for no benefit here: this client has no in-repo consumer
+// with its own HTTP client opinions to accommodate.
+openApiGenerate {
+    generatorName.set("java")
+    inputSpec.set(rootProject.layout.projectDirectory.file("../../backend/openapi/openapi.json").asFile.path)
+    outputDir.set(generatedDir.map { it.asFile.path })
+    library.set("native")
+    apiPackage.set("ai.kantharos.certharbor.client.api")
+    modelPackage.set("ai.kantharos.certharbor.client.model")
+    invokerPackage.set("ai.kantharos.certharbor.client.invoker")
+    configOptions.set(
+        mapOf(
+            "dateLibrary" to "java8",
+            // library=native only supports the Jackson serializer; "gson" is a jackson-gson
+            // generator option, not a native one, and was rejected after it failed to compile.
+            "serializationLibrary" to "jackson",
+            "useJakartaEe" to "true",
+            "hideGenerationTimestamp" to "true",
+        )
+    )
+    globalProperties.set(
+        mapOf(
+            "apiTests" to "true",
+            "modelTests" to "false",
+            "apiDocs" to "false",
+            "modelDocs" to "false",
+        )
+    )
+}
+
+sourceSets {
+    main {
+        java.srcDir(generatedDir.map { it.dir("src/main/java") })
+    }
+    test {
+        // The generator's own per-operation JUnit tests (task 3: they must pass as part of
+        // `./gradlew build`), alongside our hand-written smoke test under src/test/java.
+        java.srcDir(generatedDir.map { it.dir("src/test/java") })
+    }
+}
+
+tasks.named("compileJava") {
+    dependsOn("openApiGenerate")
+}
+
+tasks.named("compileTestJava") {
+    dependsOn("openApiGenerate")
+}
+
+tasks.named("sourcesJar") {
+    dependsOn("openApiGenerate")
+}
+
+tasks.named("javadoc") {
+    dependsOn("openApiGenerate")
+}
+
+// The "native" library template's own build.gradle (not used here; we hand-roll this file)
+// lists this dependency set for java.net.http + Jackson. Kept pinned and minimal.
+dependencies {
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.18.2"))
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.1")
+    // Multipart request bodies (file upload operations) in the native template are built with
+    // Apache HttpClient 4's MultipartEntityBuilder (org.apache.http.*) even though transport
+    // itself is java.net.http.
+    implementation("org.apache.httpcomponents:httpmime:4.5.14")
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+}
+
+// CI uses this to check GitHub Packages for an existing artifact before publishing, the same
+// idempotent-publish guard ci.yml's `client` job applies to the TS client.
+tasks.register("printVersion") {
+    doLast {
+        println(project.version)
+    }
+}
+
+tasks.named<Jar>("jar") {
+    manifest {
+        attributes("Implementation-Version" to project.version)
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kantharos-ai/certharbor")
+            credentials {
+                username = (findProperty("gpr.user") as String?) ?: System.getenv("GITHUB_ACTOR")
+                password = (findProperty("gpr.token") as String?) ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "ai.kantharos"
+            artifactId = "certharbor-client"
+            from(components["java"])
+            pom {
+                name.set("certharbor-client")
+                description.set("Autogenerated Java client for the certharbor API (backend/openapi/openapi.json).")
+                url.set("https://github.com/kantharos-ai/certharbor")
+            }
+        }
+    }
+}
+
+// The client version is the project version from VERSION plus the commit it was generated
+// from (scripts/client-version.sh, D8), computed at configuration time so a plain
+// `./gradlew build` is always version-accurate without a separate CI stamping step.
+fun clientVersion(): String {
+    val output = providers.exec {
+        commandLine(rootProject.layout.projectDirectory.file("../../scripts/client-version.sh").asFile.path)
+    }
+    return output.standardOutput.asText.get().trim()
+}
