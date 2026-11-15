@@ -38,6 +38,13 @@ clients/ruby/.cache/
 clients/ruby/*.gem
 clients/ruby/Gemfile.lock
 
+# Java client: everything under build/ is generated (openApiGenerate output plus the normal
+# Gradle build output); only the hand-written Gradle project files are committed. The wrapper
+# jar is tracked deliberately (it is not regenerated, and CI/devel need it to bootstrap Gradle).
+clients/java/build/
+clients/java/.gradle/
+!clients/java/gradle/wrapper/gradle-wrapper.jar
+
 # Generated ACME-server material for the Let's Encrypt leg (make e2e-le-certs)
 test/e2e/fixtures/pebble/certs/
 
