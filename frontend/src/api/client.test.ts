@@ -98,9 +98,9 @@ describe('installed on the generated client', () => {
   })
   afterEach(() => {
     eject()
-    // codeql[js/clear-text-cookie] jsdom test cleanup, never transmitted over
-    // any network; resets the fixture cookie between cases.
-    document.cookie = 'certharbor-csrf=; Max-Age=0'
+    // jsdom test cleanup, never transmitted over any network; resets the
+    // fixture cookie between cases.
+    document.cookie = 'certharbor-csrf=; Max-Age=0' // codeql[js/clear-text-cookie]
   })
 
   it('attaches the cookie to a mutation and not to a read', async () => {

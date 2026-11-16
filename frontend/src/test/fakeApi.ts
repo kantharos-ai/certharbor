@@ -438,10 +438,10 @@ export function installFakeApi(
     const key = `${method} ${url.pathname}`
     switch (key) {
       case 'GET /api/v1/session':
-        // codeql[js/clear-text-cookie] jsdom fake-API fixture, never
-        // transmitted over any network; simulates the backend setting the
-        // CSRF cookie so client-side tests can exercise the real flow.
-        document.cookie = `certharbor-csrf=${state.csrfCookie}`
+        // jsdom fake-API fixture, never transmitted over any network;
+        // simulates the backend setting the CSRF cookie so client-side
+        // tests can exercise the real flow.
+        document.cookie = `certharbor-csrf=${state.csrfCookie}` // codeql[js/clear-text-cookie]
         return json(sessionBody())
       case 'GET /api/v1/config':
         return json({
