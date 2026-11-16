@@ -188,6 +188,14 @@ cover: ## Run coverage gate
 version: ## Write the VERSION file into every file that carries a version
 	./scripts/sync-version.sh
 
+.PHONY: version-check
+version-check: ## Assert every version-carrying file already matches VERSION (no write)
+	./scripts/sync-version.sh --check
+
+.PHONY: client-version
+client-version: ## Print the computed <VERSION>-sha.<short-sha> client version string
+	@./scripts/client-version.sh
+
 .PHONY: openapi
 openapi: ## Regenerate backend/openapi/openapi.json from the huma-registered operations
 	cd $(GO_DIR) && go run ./cmd/openapi -out openapi/openapi.json
@@ -317,10 +325,14 @@ config-keys-check: ## Assert every web-origin key has a docs/configuration.md ro
 backend-port-check: ## Assert no compose file, base or override, publishes a host port for certharbor-control
 	./scripts/check-backend-port.sh
 
+.PHONY: backend-port-check-running
+backend-port-check-running: ## Assert the already-running certharbor-control container publishes no host port
+	./scripts/check-backend-port.sh --running
+
 .PHONY: preview
 preview: backend-port-check ## Build both images, run all four containers healthy, smoke-test the origin (before pushing nginx, Vite, CSP or prefix changes)
 	$(COMPOSE) up -d --build --wait
-	./scripts/check-backend-port.sh --running
+	$(MAKE) backend-port-check-running
 
 # Never --build: that would rebuild the frontend image, Node stage included, to
 # start a backend nobody loads the bundled SPA from. make up-backend rebuilds.

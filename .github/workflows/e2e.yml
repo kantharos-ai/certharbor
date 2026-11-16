@@ -132,7 +132,7 @@ jobs:
         run: docker compose -f docker-compose.yml -f test/e2e/compose.e2e-image.yml up -d --wait
 
       - name: The backend publishes no host port
-        run: ./scripts/check-backend-port.sh --running
+        run: make backend-port-check-running
 
       - name: Run the api project
         run: |

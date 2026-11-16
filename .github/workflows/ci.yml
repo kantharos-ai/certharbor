@@ -173,7 +173,7 @@ jobs:
 
       - name: Compute the client version
         id: client-version
-        run: echo "version=$(./scripts/client-version.sh)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(make client-version)" >> "$GITHUB_OUTPUT"
 
       - name: Stamp the client version
         working-directory: clients/ts

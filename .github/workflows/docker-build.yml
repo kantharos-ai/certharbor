@@ -70,7 +70,7 @@ jobs:
       - name: Compute the client version
         id: client-version
         if: matrix.name == 'frontend' && startsWith(github.ref, 'refs/tags/v')
-        run: echo "version=$(./scripts/client-version.sh)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(make client-version)" >> "$GITHUB_OUTPUT"
 
       - name: Wait for the published client package
         if: matrix.name == 'frontend' && startsWith(github.ref, 'refs/tags/v')

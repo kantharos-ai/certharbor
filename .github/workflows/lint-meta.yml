@@ -123,4 +123,4 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Every version matches the VERSION file
-        run: ./scripts/sync-version.sh --check
+        run: make version-check
