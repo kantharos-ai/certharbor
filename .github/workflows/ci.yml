@@ -271,7 +271,7 @@ jobs:
 
       - name: Cache the openapi-generator-cli jar
         if: steps.relevance.outputs.run == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: clients/ruby/.cache
           key: openapi-generator-cli-7.17.0
