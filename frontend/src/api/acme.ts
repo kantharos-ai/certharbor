@@ -1,4 +1,4 @@
-import { getAcmeCertificateCertificate, getAcmeCertificateKey } from '@kantharos-ai/certharbor-client'
+import { getAcmeCertificateCertificate, getAcmeCertificateKey } from '@kantharos-net/certharbor-client'
 import {
   createAcmeCertificateMutation,
   deleteAcmeCertificateMutation,
@@ -9,7 +9,7 @@ import {
   patchAcmeCertificateMutation,
   patchAcmeSettingsMutation,
   renewAcmeCertificateMutation,
-} from '@kantharos-ai/certharbor-client/react-query'
+} from '@kantharos-net/certharbor-client/react-query'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ListParams } from '../hooks/useListParams'
 import { downloadBlob } from './downloadBlob'

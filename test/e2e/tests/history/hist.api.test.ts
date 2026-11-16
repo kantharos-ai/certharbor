@@ -1,4 +1,4 @@
-import { createCertificate, listHistory, renewCertificate } from "@kantharos-ai/certharbor-client";
+import { createCertificate, listHistory, renewCertificate } from "@kantharos-net/certharbor-client";
 import { compose } from "../../helpers/compose.js";
 import { ApiSession, authedClient } from "../../helpers/apiClient.js";
 import { adminCredentials } from "../../fixtures/test.js";

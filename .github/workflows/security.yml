@@ -80,7 +80,7 @@ jobs:
           fetch-depth: 0
 
       # gitleaks/gitleaks-action now requires a paid GITLEAKS_LICENSE for
-      # org-owned repos (this repo moved to org kantharos-ai), so the OSS CLI
+      # org-owned repos (this repo moved to org kantharos-net), so the OSS CLI
       # binary is run directly instead, with the same scan coverage and the
       # same job-fails-on-finding behaviour.
       - name: Install gitleaks

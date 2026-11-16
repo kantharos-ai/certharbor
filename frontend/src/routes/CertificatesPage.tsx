@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import type { CertificateSummaryBody } from '@kantharos-ai/certharbor-client'
+import type { CertificateSummaryBody } from '@kantharos-net/certharbor-client'
 import {
   downloadCaChain,
   downloadCaIntermediate,

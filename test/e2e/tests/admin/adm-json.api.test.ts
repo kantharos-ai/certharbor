@@ -4,7 +4,7 @@ import {
   listAdminConsoleCommands,
   listSecurityEvents,
   runAdminConsoleCommand,
-} from "@kantharos-ai/certharbor-client";
+} from "@kantharos-net/certharbor-client";
 import { composeOrThrow, waitHealthy } from "../../helpers/compose.js";
 import { ApiSession, authedClient, newApiClient } from "../../helpers/apiClient.js";
 import { adminCredentials } from "../../fixtures/test.js";
@@ -15,7 +15,7 @@ import { expect, test } from "@playwright/test";
 // GET /api/v1/admin/console/commands and POST /api/v1/admin/console/run.
 // adm-01.api.test.ts and adm-console.api.test.ts cover the same operations
 // through the apiClient/apiMutation helpers instead of the generated
-// @kantharos-ai/certharbor-client used here; this file is additional
+// @kantharos-net/certharbor-client used here; this file is additional
 // coverage of the generated client, not a replacement for either.
 //
 // The 19-row preflight check-name list and the serial CA-up/CA-down pair

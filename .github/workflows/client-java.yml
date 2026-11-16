@@ -84,7 +84,7 @@ jobs:
           GROUP_PATH="ai/kantharos"
           if curl -fsSL \
                -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-               "https://maven.pkg.github.com/kantharos-ai/certharbor/${GROUP_PATH}/certharbor-client/${VERSION}/certharbor-client-${VERSION}.pom" \
+               "https://maven.pkg.github.com/kantharos-net/certharbor/${GROUP_PATH}/certharbor-client/${VERSION}/certharbor-client-${VERSION}.pom" \
                -o /dev/null; then
             echo "already published at ${VERSION}, publish is idempotent"
           else

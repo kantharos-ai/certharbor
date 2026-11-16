@@ -3,7 +3,7 @@ import {
   getAdminIntegrityOptions,
   listAdminConsoleCommandsOptions,
   runAdminConsoleCommandMutation,
-} from '@kantharos-ai/certharbor-client/react-query'
+} from '@kantharos-net/certharbor-client/react-query'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 // GET /api/v1/admin/about: system metadata plus the same preflight checks

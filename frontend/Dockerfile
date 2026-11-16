@@ -5,7 +5,7 @@
 
 # CLIENT_SOURCE selects the client-source stage below: "local" (default)
 # builds the client from source in-image, "registry" installs the real
-# published @kantharos-ai/certharbor-client at an exact version. Must be
+# published @kantharos-net/certharbor-client at an exact version. Must be
 # declared before any FROM that references it.
 ARG CLIENT_SOURCE=local
 
@@ -26,7 +26,7 @@ RUN npm ci \
  && npm run generate && npm run build \
  && npm version "$(tr -d '[:space:]' < ../../VERSION)-dev" --no-git-tag-version --allow-same-version \
  && npm pack --pack-destination dist \
- && mv dist/kantharos-ai-certharbor-client-*.tgz dist/client.tgz
+ && mv dist/kantharos-net-certharbor-client-*.tgz dist/client.tgz
 WORKDIR /client-pkg
 RUN npm init -y >/dev/null \
  && npm install --no-save /src/clients/ts/dist/client.tgz
@@ -46,9 +46,9 @@ WORKDIR /client-pkg
 RUN npm init -y >/dev/null
 RUN --mount=type=secret,id=npm_token \
     REGISTRY_HOST="${NPM_REGISTRY_URL#https://}" && \
-    printf '@kantharos-ai:registry=%s\n//%s/:_authToken=%s\n' \
+    printf '@kantharos-net:registry=%s\n//%s/:_authToken=%s\n' \
       "$NPM_REGISTRY_URL" "$REGISTRY_HOST" "$(cat /run/secrets/npm_token)" > .npmrc && \
-    npm install --save-exact "@kantharos-ai/certharbor-client@${CLIENT_VERSION}" && \
+    npm install --save-exact "@kantharos-net/certharbor-client@${CLIENT_VERSION}" && \
     rm -f .npmrc
 
 # ── Client source selection ───────────────────────────────────────────────────
@@ -67,7 +67,7 @@ COPY frontend/ /src/frontend/
 WORKDIR /src/frontend
 # Either client-source stage produces the installed package at the same
 # path, so this COPY is identical regardless of CLIENT_SOURCE.
-COPY --from=client-source /client-pkg/node_modules/@kantharos-ai ./node_modules/@kantharos-ai
+COPY --from=client-source /client-pkg/node_modules/@kantharos-net ./node_modules/@kantharos-net
 # CONTRACT_SHA defaults to the digest of the spec the client was generated
 # from; a skew test overrides it to force a mismatch (5.10).
 ARG CONTRACT_SHA=""

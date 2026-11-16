@@ -6,7 +6,7 @@ import {
   getCaRoot,
   getCertificateCertificate,
   getCertificateKey,
-} from "@kantharos-ai/certharbor-client";
+} from "@kantharos-net/certharbor-client";
 import { run } from "../../helpers/compose.js";
 import { ApiSession, authedClient, blobText } from "../../helpers/apiClient.js";
 import { adminCredentials, FIXTURE_USERS } from "../../fixtures/test.js";

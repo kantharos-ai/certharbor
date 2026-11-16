@@ -1,4 +1,4 @@
-import { getDashboard } from "@kantharos-ai/certharbor-client";
+import { getDashboard } from "@kantharos-net/certharbor-client";
 import { composeOrThrow, waitHealthy } from "../../helpers/compose.js";
 import { ApiSession, authedClient, newApiClient } from "../../helpers/apiClient.js";
 import { FIXTURE_USERS } from "../../fixtures/test.js";

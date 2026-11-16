@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import type { AcmeCertificateBody } from '@kantharos-ai/certharbor-client'
+import type { AcmeCertificateBody } from '@kantharos-net/certharbor-client'
 import {
   downloadAcmeCrt,
   downloadAcmeKey,

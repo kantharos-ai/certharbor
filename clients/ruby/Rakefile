@@ -35,7 +35,7 @@ task generate: :fetch_generator do
     'gemName' => 'certharbor-client',
     'moduleName' => 'CertharborClient',
     'gemVersion' => version,
-    'gemHomepage' => 'https://github.com/kantharos-ai/certharbor',
+    'gemHomepage' => 'https://github.com/kantharos-net/certharbor',
     'gemSummary' => 'Typed Ruby client for the certharbor API',
     'gemDescription' => 'Ruby client generated from backend/openapi/openapi.json',
     'gemAuthor' => 'Kantharos AI',

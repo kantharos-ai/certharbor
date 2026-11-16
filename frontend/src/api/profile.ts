@@ -3,7 +3,7 @@ import {
   getProfileOptions,
   patchProfileMutation,
   patchProfilePreferencesMutation,
-} from '@kantharos-ai/certharbor-client/react-query'
+} from '@kantharos-net/certharbor-client/react-query'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { invalidate } from './invalidation'
 

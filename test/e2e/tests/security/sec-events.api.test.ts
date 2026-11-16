@@ -1,4 +1,4 @@
-import { deleteIpBlock, listSecurityEvents } from "@kantharos-ai/certharbor-client";
+import { deleteIpBlock, listSecurityEvents } from "@kantharos-net/certharbor-client";
 import { exec, psql } from "../../helpers/compose.js";
 import { ApiSession, authedClient, newApiClient } from "../../helpers/apiClient.js";
 import { adminCredentials } from "../../fixtures/test.js";

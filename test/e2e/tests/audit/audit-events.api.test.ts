@@ -1,4 +1,4 @@
-import { listAuditEvents } from "@kantharos-ai/certharbor-client";
+import { listAuditEvents } from "@kantharos-net/certharbor-client";
 import { psql } from "../../helpers/compose.js";
 import { ApiSession, authedClient, newApiClient } from "../../helpers/apiClient.js";
 import { adminCredentials } from "../../fixtures/test.js";

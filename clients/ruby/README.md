@@ -37,6 +37,6 @@ same scheme and script the TypeScript client uses (D8).
 ## Publication
 
 Published to GitHub Packages' RubyGems registry
-(`https://rubygems.pkg.github.com/kantharos-ai`) only on `v*` tags, same
+(`https://rubygems.pkg.github.com/kantharos-net`) only on `v*` tags, same
 cadence as the TypeScript client, to avoid republish-collision churn on every
 merge. See `.github/workflows/client-ruby.yml`.

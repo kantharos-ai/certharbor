@@ -41,6 +41,6 @@ export default defineConfig(({ command }) => ({
     restoreMocks: true,
     // The client's emitted imports carry no file extension, which Vite resolves
     // and Node's ESM loader does not, so it is transformed rather than externalised.
-    server: { deps: { inline: [/@kantharos-ai\/certharbor-client/] } },
+    server: { deps: { inline: [/@kantharos-net\/certharbor-client/] } },
   },
 }))

@@ -113,7 +113,7 @@ rake build      # generate + `gem build`, produces certharbor-client-<version>.g
 
 One generator quirk worth knowing: openapi-generator 7.17.0's `ruby` target cannot handle `session`'s cookie-based `apiKey` scheme (`in: cookie`) and emits broken code for it; `clients/ruby/scripts/fix_cookie_auth.rb` patches the two affected generated files immediately after generation to send the cookie correctly. It is idempotent and a no-op once/if upstream fixes the bug.
 
-Versioning follows the same `<VERSION>-sha.<short-sha>` scheme as the TypeScript client (`scripts/client-version.sh`). `ci.yml`'s `client-ruby` job builds and tests this gem on every push/PR touching `backend/openapi/openapi.json` or `clients/ruby/**`, and publishes to GitHub Packages' RubyGems registry (`https://rubygems.pkg.github.com/kantharos-ai`) only on `v*` tags, mirroring the TS client's publish cadence (D8) to avoid republish-collision churn.
+Versioning follows the same `<VERSION>-sha.<short-sha>` scheme as the TypeScript client (`scripts/client-version.sh`). `ci.yml`'s `client-ruby` job builds and tests this gem on every push/PR touching `backend/openapi/openapi.json` or `clients/ruby/**`, and publishes to GitHub Packages' RubyGems registry (`https://rubygems.pkg.github.com/kantharos-net`) only on `v*` tags, mirroring the TS client's publish cadence (D8) to avoid republish-collision churn.
 
 To regenerate the Java client package (`clients/java`):
 

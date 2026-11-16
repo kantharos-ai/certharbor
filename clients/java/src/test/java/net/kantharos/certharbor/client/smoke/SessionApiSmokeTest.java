@@ -1,11 +1,11 @@
-package ai.kantharos.certharbor.client.smoke;
+package net.kantharos.certharbor.client.smoke;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import ai.kantharos.certharbor.client.api.SessionApi;
-import ai.kantharos.certharbor.client.invoker.ApiClient;
-import ai.kantharos.certharbor.client.model.SessionBody;
+import net.kantharos.certharbor.client.api.SessionApi;
+import net.kantharos.certharbor.client.invoker.ApiClient;
+import net.kantharos.certharbor.client.model.SessionBody;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
